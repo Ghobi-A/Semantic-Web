@@ -1,9 +1,22 @@
+# Python runtime artifacts
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+
+# Notebook state
 .ipynb_checkpoints/
+
+# Packaging/build artifacts
 *.egg-info/
 dist/
 build/
+
+# Virtual environments and local environment files
 .env
+.env.*
 .venv/
+venv/
+env/
+
+# Generated simulation logs
+results/*.csv
