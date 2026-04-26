@@ -2,7 +2,9 @@
 
 **Optimal decision-making under uncertainty in adversarial turn-based systems.**
 
-A turn-based class combat engine designed as a data science portfolio piece. Six classes, three move archetypes, probabilistic speed resolution, and a compressed damage formula — all fully automatable for Monte Carlo simulation and AI policy comparison.
+*When do stochastic execution dynamics fail to induce mixed-strategy optimal play?*
+
+A turn-based class combat engine designed as a data science portfolio piece. Six classes, three move archetypes, probabilistic speed resolution, and a compressed damage formula — all fully automatable for Monte Carlo simulation, AI policy comparison, and game-theoretic equilibrium analysis.
 
 The game is the domain. The data science is the product.
 
@@ -36,6 +38,7 @@ crestbound/
 ├── models.py        # Unit, Move, StatusEffect dataclasses. 6-class × 3-move table.
 ├── combat.py        # Damage calc, speed resolution, Brace passive, battle loop.
 ├── ai.py            # Random, Greedy, Lookahead AI policies.
+├── nash.py          # Nash equilibrium solver, policy entropy, Greedy vs Nash comparison.
 ├── simulation.py    # Monte Carlo harness, 6×6 matrix, CSV export.
 ├── main.py          # Runner: matrices, policy comparison, log export.
 ├── analysis.ipynb   # Jupyter notebook with heatmaps and visualisations.
@@ -115,12 +118,30 @@ For the notebook: `pip install matplotlib seaborn jupyter pandas numpy`
 
 ---
 
+## Nash Equilibrium Analysis
+
+Single-turn normal form game analysis reveals that **all 15 matchups have pure-strategy Nash equilibria**. Greedy play equals Nash-optimal play in every case. Average policy entropy = 0.
+
+| Metric | Result |
+|--------|--------|
+| Pure equilibria | 15/15 (100%) |
+| Mixed equilibria | 0/15 (0%) |
+| Greedy = Nash | 15/15 (100%) |
+| Avg policy entropy | 0.000 |
+
+**Verdict:** The system is *strategy-deterministic* — execution stochasticity (damage variance, speed resolution) does **not** induce mixed-strategy optimal play at the single-turn level.
+
+**Why:** Basic moves dominate because Signature/Gambit effects (debuffs, buffs, status) only pay off over multiple turns, which the single-turn payoff matrix cannot capture. The real question is whether the *multi-turn extensive form game* admits mixed equilibria.
+
+---
+
 ## Known Issues / Next Steps
 
-- **Mage vs Assassin** is a near-deterministic matchup (~100/0) — structural type mismatch with no current workaround
-- **Nash equilibrium solver** — mixed-strategy optimal play (planned)
-- **3v3 team composition** — switching, TFT-style synergy traits (planned)
-- **Streamlit web demo** — interactive version for non-technical users (planned)
+- **Mage vs Assassin** is near-deterministic (~100/0) — structural type mismatch (physical-only into high RES)
+- **Multi-turn Nash analysis** — extend equilibrium computation to the extensive form game to test whether multi-turn setup moves (Armor Break → Gambit sequences) induce mixed play
+- **Policy entropy by matchup** — identify which matchups are game-theoretically trivial vs genuinely strategic
+- **3v3 team composition** — switching, TFT-style synergy traits
+- **Streamlit web demo** — interactive version for non-technical users
 
 ---
 
@@ -129,7 +150,8 @@ For the notebook: `pip install matplotlib seaborn jupyter pandas numpy`
 | Version | Changes |
 |---------|---------|
 | v2.0 | Compressed formula, Brace passive, 3-move system, Greedy + Lookahead AI |
-| v2.1 | Balance pass: Neutral buffs (HP 78, Hybrid Strike 23p, Focus Shift +5/+5), Assassin tuning (RES 55, Cripple -5/-5), Guardian ATK 40, Sorcerer HP 72. CSV export. Spread reduced from 36pp to 9pp. |
+| v2.1 | Balance pass: Neutral buffs (HP 78, Hybrid Strike 23p, Focus Shift +5/+5), Assassin tuning (RES 55, MAG 38, Cripple -5/-5), Guardian ATK 40, Sorcerer HP 72. CSV export. Spread reduced from 36pp to 9pp. |
+| v2.1+Nash | Single-turn Nash equilibrium solver. Proved system is strategy-deterministic: all 15 matchups have pure equilibria, Greedy = Nash optimal. |
 
 ---
 

@@ -1,8 +1,9 @@
 # Core engine: no dependencies (Python 3.10+ stdlib only)
 
-# For the analysis notebook:
+# For the analysis notebook and Nash solver:
 matplotlib>=3.7
 seaborn>=0.12
 pandas>=2.0
 numpy>=1.24
+scipy>=1.10
 jupyter>=1.0
